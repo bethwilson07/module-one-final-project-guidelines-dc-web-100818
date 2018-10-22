@@ -1,4 +1,4 @@
 class Player < ActiveRecord::Base
   belongs_to :team
-  #delegate ????? 
+  #delegate ?????
 end
