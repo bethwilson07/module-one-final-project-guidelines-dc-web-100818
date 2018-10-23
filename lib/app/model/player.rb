@@ -56,9 +56,9 @@ class Player < ActiveRecord::Base
     end
   end
 
-  def self.all_players_from_nationality(nationality)
+  def self.all_players_from_nation(nation)
+    players = self.all.select {|player| player.nationality == nation}.collect {|player| player.name}
+    "The players from #{nation} are #{self.oxford(players)}."
   end
-
-
 
 end
