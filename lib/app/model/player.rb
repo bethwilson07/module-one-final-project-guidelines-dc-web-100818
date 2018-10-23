@@ -58,11 +58,18 @@ class Player < ActiveRecord::Base
 
   def self.all_players_from_nation(nation)
     players = self.all.select {|player| player.nationality == nation}.collect {|player| player.name}
-    "The players from #{nation} are #{self.oxford(players)}."
+    if players.count >1
+      "The players from #{nation} are #{self.oxford(players)}."
+    else
+      "#{player} is the only player from #{nation}."
+    end
   end
 
   def player_time_with_team
-    
+    date1 = DateTime.parse(self.date_signed).to_date
+    date2 = Time.now.strftime("%Y-%m-%d")
+    today = date2.to_date
+    "#{((today - date1)/365).to_f.round(0)} years"
   end
 
 end

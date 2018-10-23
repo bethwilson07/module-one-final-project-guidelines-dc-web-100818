@@ -11,6 +11,10 @@ def player_count
   self.players.count
 end
 
+def get_managers_in_league
+  
+end
+
 # def year_founded
 # end
 #
