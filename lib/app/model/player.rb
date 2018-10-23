@@ -61,4 +61,8 @@ class Player < ActiveRecord::Base
     "The players from #{nation} are #{self.oxford(players)}."
   end
 
+  def player_time_with_team
+    
+  end
+
 end

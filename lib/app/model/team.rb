@@ -28,6 +28,16 @@ class Team < ActiveRecord::Base
     end
   end
 
+  def oxford(arr)
+    if arr.count == 1
+      arr.join
+    elsif arr.count == 2
+      arr.join(" and ")
+    elsif arr.length >= 3
+      arr[0..arr.count - 2].join(", ") + ", and " + arr[-1]
+    end
+  end
+
   def self.oldest_team
     oldest_team = self.all.sort_by {|team| team.team_age}[-1]
     old_team_arr = Team.where(year_founded: oldest_team.year_founded).map {|team| team.name}
@@ -45,6 +55,26 @@ class Team < ActiveRecord::Base
       "#{self.oxford(young_team_arr)} are the youngest teams. They were founded in #{youngest_team.year_founded}."
     else
       "#{young_team_arr.join(" ")} is the youngest team. It was founded in #{youngest_team.year_founded}."
+    end
+  end
+
+  def youngest_player
+    young_player = self.players.sort_by {|player| player.player_age }[0]
+    young_players = self.players.select {|player| player.player_age == young_player.player_age}.collect {|player| player.name}
+    if young_players.count > 1
+      "#{oxford(young_players)} are the youngest players. They are #{young_player.player_age} years old."
+    else
+      "#{young_players.join(" ")} is the youngest player. He is #{young_player.player_age} years old."
+    end
+  end
+
+  def oldest_player
+    old_player = self.players.sort_by {|player| player.player_age }[-1]
+    old_players = self.players.select {|player| player.player_age == old_player.player_age}.collect {|player| player.name}
+    if old_players.count > 1
+      "#{oxford(old_players)} are the oldest players. They are #{old_player.player_age} years old."
+    else
+      "#{old_players.join(" ")} is the oldest player. He is #{old_player.player_age} years old."
     end
   end
 
