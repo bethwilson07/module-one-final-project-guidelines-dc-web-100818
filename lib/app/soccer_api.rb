@@ -18,7 +18,7 @@ end
 def get_soccer_leagues_from_api
   sports_leagues = JSON.parse(RestClient.get('https://www.thesportsdb.com/api/v1/json/1/all_leagues.php'))
 
-  soccer_leagues = sports_leagues['leagues'].select{ |league| league['strSport'] == 'Soccer'}
+  soccer_leagues = sports_leagues['leagues'].select{ |league| league['strSport'] == 'Soccer' && league["strLeague"] != "_No League"}
 
   soccer_leagues.each do |league|
       league_details = JSON.parse(RestClient.get('https://www.thesportsdb.com/api/v1/json/1/lookupleague.php?id=' + league["idLeague"]))['leagues'][0]
