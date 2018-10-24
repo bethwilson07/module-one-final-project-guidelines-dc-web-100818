@@ -15,7 +15,7 @@ class Team < ActiveRecord::Base
   def team_age #works
     date1 = self.year_founded.to_i
     today = Time.now.strftime("%Y").to_i
-    today - date1
+    "#{today - date1} years"
   end
 
   def self.oxford(arr)
@@ -38,9 +38,9 @@ class Team < ActiveRecord::Base
     end
   end
 
-  def self.num_digits
-   Math.log10(self).to_i + 1
-  end
+  # def self.num_digits
+  #  Math.log10(self).to_i + 1
+  # end
 
   def self.refined_age_data #works enough
     nonzero_ages = self.all.select {|team| team.year_founded.to_i != 0}
