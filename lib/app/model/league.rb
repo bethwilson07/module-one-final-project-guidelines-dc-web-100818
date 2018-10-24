@@ -2,6 +2,8 @@ class League < ActiveRecord::Base
   has_many :teams
   has_many :players, through: :teams
 
+################ HELPER METHODS ##########################
+
   def league_age
     date1 = self.year_founded.to_i
     today = Time.now.strftime("%Y").to_i
@@ -32,7 +34,9 @@ class League < ActiveRecord::Base
     end
   end
 
-  def self.oldest_league
+################ CLASS METHODS ###########################
+
+  def self.oldest
     oldest_league = self.all.sort_by {|league| league.league_age}[-1]
     old_league_arr = League.where(year_founded: oldest_league.year_founded).map {|league| league.name}
     if old_league_arr.count > 1
@@ -42,7 +46,7 @@ class League < ActiveRecord::Base
     end
   end
 
-  def self.youngest_league
+  def self.youngest
     youngest_league = self.all.sort_by {|league| league.league_age}[0]
     young_league_arr = League.where(year_founded: youngest_league.year_founded).map {|league| league.name}
     if young_league_arr.count > 1
@@ -52,15 +56,21 @@ class League < ActiveRecord::Base
     end
   end
 
-  def self.largest_league
+  def self.largest
     largest = self.all.sort_by {|league| league.league_size }[-1]
     "The largest league is #{largest.name} with #{largest.league_size} teams."
   end
 
-  def self.smallest_league
+  def self.smallest
     smallest = self.all.sort_by {|league| league.league_size }[0]
     "The smallest league is #{smallest.name} with #{smallest.league_size} teams."
   end
+
+  def self.by_nation(nation)
+    self.where(nation: nation).collect { |league| league.name }
+  end
+
+  ################ INSTANCE METHODS ###################
 
   def oldest_team
     oldest_team = self.teams.sort_by{|team| team.team_age}[-1]
@@ -86,13 +96,15 @@ class League < ActiveRecord::Base
     self.teams.collect {|team| team.name}
   end
 
-  def roster_size
+  def player_count
     self.players.count
   end
 
   def managers
-    self.teams.collect {|team| team.manager }.uniq
+    team_managers = self.teams.collect {|team| "#{team.manager} - #{team.name}" }.uniq
+
+    # team_managers.each_with_index do |manager, index|
+    #   puts "#{index + 1}. #{manager}"
+    # end
   end
-
-
 end
