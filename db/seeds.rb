@@ -2,10 +2,10 @@ Player.destroy_all
 Team.destroy_all
 League.destroy_all
 
-epl = League.create(name: "English Primier League", nation: "England", year_founded: "1987", description: "lots of info")
+epl = League.create(name: "English Primier League", nation: "England", year_founded: "1984", description: "lots of info")
 liga = League.create(name: "La Liga", nation: "Spain", year_founded: "1999", description: "lots of info")
 lige = League.create(name: "Lige 1", nation: "France", year_founded: "1977", description: "lots of info")
-mls = League.create(name: "US Major League Soccer", nation: "USA", year_founded: "1967", description: "lots of info")
+mls = League.create(name: "US Major League Soccer", nation: "USA", year_founded: "1999", description: "lots of info")
 italy = League.create(name: "Serie a", nation: "Italy", year_founded: "1985", description: "lots of info")
 
 team1 = Team.create(name: "Everton", city: "Liverpool", league: epl, year_founded: "1987", manager: "Chris Hughton", description: "lots of info", stadium_name: "FedEx Field", stadium_location: "London, England")

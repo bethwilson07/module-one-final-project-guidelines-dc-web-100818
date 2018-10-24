@@ -44,7 +44,7 @@ class Team < ActiveRecord::Base
     if old_team_arr.count > 1
       "#{self.oxford(old_team_arr)} are the oldest teams. They were founded in #{oldest_team.year_founded}."
     else
-      "#{old_team_arr.join(" ")} is the oldest team. It was founded in #{oldest_team.year_founded}."
+      "#{old_team_arr.join(" ")} is the oldest team on our record. It was founded in #{oldest_team.year_founded}."
     end
   end
 
@@ -54,7 +54,7 @@ class Team < ActiveRecord::Base
     if young_team_arr.count > 1
       "#{self.oxford(young_team_arr)} are the youngest teams. They were founded in #{youngest_team.year_founded}."
     else
-      "#{young_team_arr.join(" ")} is the youngest team. It was founded in #{youngest_team.year_founded}."
+      "#{young_team_arr.join(" ")} is the youngest team on our record. It was founded in #{youngest_team.year_founded}."
     end
   end
 
