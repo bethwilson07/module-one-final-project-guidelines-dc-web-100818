@@ -22,42 +22,30 @@ class Player < ActiveRecord::Base
     end
   end
 
-  def self.tallest_player #make a conditional
-    tallest = self.all.sort_by{|player|
-      player.height.to_f}[-1]
+  def self.refined_height_data
+    nonzero_heights = self.all.select {|player| player.height.to_s.ends_with?("m") && !player.height.to_s.include?("cm")}
+    refined = nonzero_heights.select {|player| !player.height.to_s.starts_with?("(") && !player.height.to_s.include?(",")}
+    refined
+  end
+
+  def self.tallest_player
+    tallest = self.refined_height_data.sort_by {|player| player.height.to_f}[-1]
     tall_players_arr = Player.where(height: tallest.height).map {|player| player.name}
-    if tall_players_arr.count > 0
-    "The tallest players on record are #{self.oxford(tall_players_arr)} with a height of #{tallest.height} m or #{(tallest.height.to_f * 3.3).round(2)} ft"
+    if tall_players_arr.count > 1
+    "The tallest players on our record are #{self.oxford(tall_players_arr)} with a height of #{tallest.height.to_f} m or #{(tallest.height.to_f * 3.3).round(2)} ft"
     else
-    "The tallest player on record is #{self.oxford(tall_players_arr)} with a height of #{tallest.height} m or #{(tallest.height.to_f * 3.3).round(2)} ft"
+    "The tallest player on our record is #{self.oxford(tall_players_arr)} with a height of #{tallest.height.to_f} m or #{(tallest.height.to_f * 3.3).round(2)} ft"
     end
   end
 
-  def self.shortest_player #eliminate height = 0
-   self.all.each do |player|
-      if player.height.to_f > 0 && != nil
-      short = self.all.sort_by{|player| player.height.to_f}
-      binding.pry
-      end
-    end
-
-    shortest_players = short.map do |player|
-      if player.height == "" || player.height == "0"
-        player.delete!
-      else
-        player.height.to_f
-      end
-    end
-    shortest_players
-
-    # shortest_no_zeroes = shortest.map do |player|
-    #   if player.height.to_f != 0.0 || player.height.to_f != nil
-    #     player.height.to_f
-    #   end
-    # end
-    binding.pry
-    short_players_arr = Player.where(height: shortest.height).map {|player| player.name}
-    "The shortest player(s) on record is(are) #{self.oxford(short_players_arr)} with a height of #{shortest.height} m or #{(shortest.height.to_f * 3.3).round(2)} ft"
+  def self.shortest_player
+   shortest = self.refined_height_data.sort_by {|player| player.height.to_f}[0]
+   short_players_arr = Player.where(height: shortest.height).map {|player| player.name}
+   if short_players_arr.count > 1
+    "The shortest players on our record are #{self.oxford(short_players_arr)} with a height of #{shortest.height.to_f} m or #{(shortest.height.to_f * 3.3).round(2)} ft"
+   else
+    "The shortest player on our record is #{self.oxford(short_players_arr)} with a height of #{shortest.height.to_f} m or #{(shortest.height.to_f * 3.3).round(2)} ft"
+   end
   end
 
   def self.oldest_player #invalid date
