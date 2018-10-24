@@ -2,9 +2,10 @@ Player.destroy_all
 Team.destroy_all
 League.destroy_all
 
-soccer_leagues = get_soccer_leagues_from_api
-get_league_details(soccer_leagues)
-get_league_teams(soccer_leagues)
+get_soccer_leagues_from_api
+#soccer_leagues = get_soccer_leagues_from_api
+#get_league_details(soccer_leagues)
+#get_league_teams(soccer_leagues)
 
 # epl = League.create(name: "English Primier League", nation: "England", year_founded: "1987", description: "lots of info")
 # liga = League.create(name: "La Liga", nation: "Spain", year_founded: "1999", description: "lots of info")
