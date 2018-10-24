@@ -4,13 +4,32 @@ class Player < ActiveRecord::Base
   belongs_to :team
   delegate :league, :to => :team
 
+  def validate_date(string)
+    format_ok = string.match(/\d{4}-\d{2}-\d{2}/)
+    parseable = Date.strptime(string, '%Y-%m-%d') rescue false
 
-  def player_age
-    date1 = DateTime.parse(self.birthdate).to_date
-    date2 = Time.now.strftime("%Y-%m-%d")
-    today = date2.to_date
-    ((today - date1)/365).to_f.round(0)
+    if string == 'never' || format_ok && parseable
+      puts "true"
+    else
+      puts "false"
+    end
   end
+
+  def player_age #works on players with valid date
+    if self.birthdate != nil
+    player_year = self.birthdate[0...4].to_i
+    Time.now.year - player_year
+    else
+      "invalid date"
+    end
+  end
+
+  # def self.player_age
+  #  date1 = DateTime.parse(self.birthdate).to_date
+  #  date2 = Time.now.strftime("%Y-%m-%d")
+  #  today = date2.to_date
+  #  ((today - date1)/365).to_f.round(0)
+  # end
 
   def self.oxford(arr)
     if arr.count == 1
@@ -22,13 +41,13 @@ class Player < ActiveRecord::Base
     end
   end
 
-  def self.refined_height_data
+  def self.refined_height_data #works enough
     nonzero_heights = self.all.select {|player| player.height.to_s.ends_with?("m") && !player.height.to_s.include?("cm")}
     refined = nonzero_heights.select {|player| !player.height.to_s.starts_with?("(") && !player.height.to_s.include?(",")}
     refined
   end
 
-  def self.tallest_player
+  def self.tallest_player #works
     tallest = self.refined_height_data.sort_by {|player| player.height.to_f}[-1]
     tall_players_arr = Player.where(height: tallest.height).map {|player| player.name}
     if tall_players_arr.count > 1
@@ -38,7 +57,7 @@ class Player < ActiveRecord::Base
     end
   end
 
-  def self.shortest_player
+  def self.shortest_player #works
    shortest = self.refined_height_data.sort_by {|player| player.height.to_f}[0]
    short_players_arr = Player.where(height: shortest.height).map {|player| player.name}
    if short_players_arr.count > 1
@@ -48,8 +67,12 @@ class Player < ActiveRecord::Base
    end
   end
 
+  def self.refined_birthdate_data #implicit conversion of nil to string
+    refined = self.all.select {|player| !player.birthdate.to_s.nil? && player.birthdate.to_s != ""}
+  end
+
   def self.oldest_player #invalid date
-    oldest_player = self.all.sort_by {|player| player.player_age}[-1]
+    oldest_player = self.refined_birthdate_data.sort_by{|player| player.player_age}[-1]
     old_player_arr = Player.where(birthdate: oldest_player.birthdate).map {|player| player.name}
     if old_player_arr.count > 1
       "#{self.oxford(old_player_arr)} are the oldest players. They are #{oldest_player.player_age} years old."
@@ -68,7 +91,7 @@ class Player < ActiveRecord::Base
     end
   end
 
-  def self.all_players_from_nation(nation)
+  def self.all_players_from_nation(nation) #works
     players = self.all.select {|player| player.nationality == nation}.collect {|player| player.name}
     if players.count >1
       "The players from #{nation} are #{self.oxford(players)}."
@@ -77,7 +100,7 @@ class Player < ActiveRecord::Base
     end
   end
 
-  def player_time_with_team
+  def player_time_with_team #works if date_signed is valid
     date1 = DateTime.parse(self.date_signed).to_date
     date2 = Time.now.strftime("%Y-%m-%d")
     today = date2.to_date

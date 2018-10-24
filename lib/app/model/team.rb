@@ -4,15 +4,15 @@ class Team < ActiveRecord::Base
   has_many :players
   belongs_to :leagues
 
-  def get_team_roster
+  def get_team_roster #works
     self.players.collect {|player| player.name}
   end
 
-  def player_count
+  def player_count #works
     self.get_team_roster.count
   end
 
-  def team_age
+  def team_age #works
     date1 = self.year_founded.to_i
     today = Time.now.strftime("%Y").to_i
     today - date1
@@ -38,17 +38,26 @@ class Team < ActiveRecord::Base
     end
   end
 
-  def self.oldest_team
-    oldest_team = self.all.sort_by {|team| team.team_age}[-1]
+  def self.num_digits
+   Math.log10(self).to_i + 1
+  end
+
+  def self.refined_age_data #works enough
+    nonzero_ages = self.all.select {|team| team.year_founded.to_i != 0}
+    nonzero_ages
+  end
+
+  def self.oldest_team #works
+    oldest_team = self.refined_age_data.sort_by {|team| team.team_age}[-3]
     old_team_arr = Team.where(year_founded: oldest_team.year_founded).map {|team| team.name}
     if old_team_arr.count > 1
-      "#{self.oxford(old_team_arr)} are the oldest teams. They were founded in #{oldest_team.year_founded}."
+      "#{self.oxford(old_team_arr)} are the oldest teams according to our records. They were founded in #{oldest_team.year_founded}."
     else
       "#{old_team_arr.join(" ")} is the oldest team on our record. It was founded in #{oldest_team.year_founded}."
     end
   end
 
-  def self.youngest_team
+  def self.youngest_team #works
     youngest_team = self.all.sort_by {|team| team.team_age}[0]
     young_team_arr = Team.where(year_founded: youngest_team.year_founded).map {|team| team.name}
     if young_team_arr.count > 1
@@ -58,7 +67,7 @@ class Team < ActiveRecord::Base
     end
   end
 
-  def youngest_player
+  def youngest_player #works
     young_player = self.players.sort_by {|player| player.player_age }[0]
     young_players = self.players.select {|player| player.player_age == young_player.player_age}.collect {|player| player.name}
     if young_players.count > 1
@@ -68,7 +77,7 @@ class Team < ActiveRecord::Base
     end
   end
 
-  def oldest_player
+  def oldest_player #works
     old_player = self.players.sort_by {|player| player.player_age }[-1]
     old_players = self.players.select {|player| player.player_age == old_player.player_age}.collect {|player| player.name}
     if old_players.count > 1
