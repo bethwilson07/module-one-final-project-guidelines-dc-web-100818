@@ -33,7 +33,7 @@ def get_top_level_user_input
       when "2", "teams"
         team_menu
       when "3", "leagues"
-        league_options
+        league_menu
       when "4", "h", "help"
         help
       when "5", "q", "exit"
@@ -47,14 +47,19 @@ end
 #############################  OPTION 1: PLAYER METHODS ###################################
 
 def player_menu
-  puts "Player Options Menu:
+  puts "---------------------------------------
+  Player Options Menu:
+
   1. Search players by country
-  2. Find player stats
-  3. Return to previous menu
+  2. Find the tallest player in the database
+  3. Find the shortest player in the database
+  4. Find player stats
+  5. Return to previous menu
 
 
-    h - help
-    q - exit program
+  press 'h' for help
+  press 'q' to exit the program
+  ---------------------------------------
                               "
   player_options
   get_top_level_user_input
@@ -70,7 +75,10 @@ def player_options
       when "1"
         search_player_by_country
       when "2"
-        puts "-------------------------------"
+        find_tallest_player
+      when "3"
+        find_shortest_player
+      when "4"
         player_stats_menu
       when "3"
         puts "Welcome back!"
@@ -102,7 +110,8 @@ end
 
 ### Player option 2 ###
 def player_stats_menu
-  puts "Player Stats Options Menu:
+  puts " -------------------------------
+  Player Stats Options Menu:
 
   1. Find a player's team
   2. Find a player's amount of time with his team
@@ -110,13 +119,12 @@ def player_stats_menu
   4. Get a player's position
   5. Get a player's history/description
   6. Find a player's nationality
-  7. Find the tallest player in the database
-  8. Find the shortest player in the database
 
   9. Return to Player Options Menu
 
-  h - help
-  q - exit program
+  press 'h' for help
+  press 'q' to exit the program
+  -------------------------------------------
 
   Please enter one of the above option numbers:"
 
@@ -141,10 +149,6 @@ def get_user_input_from_player_stats
         find_player_description
       when "6"
         find_player_nationality
-      when "7"
-        find_tallest_player
-      when "8"
-        find_shortest_player
       when "9"
         puts "Welcome back!"
         player_menu
@@ -286,7 +290,7 @@ def team_menu
   4. Return to previous menu
 
   press 'h' for help
-  press 'q' to quit
+  press 'q' to exit the program
   -------------------------------------
   "
   # 3. Get a team roster
@@ -384,7 +388,7 @@ def team_details_menu(team)
 
 
   press 'h' for help
-  press 'q' to quit
+  press 'q' to exit the program
   -----------------------------
   "
 
@@ -473,15 +477,22 @@ end
 ############################## OPTION 3 LEAGUE METHODS ###########################
 
 def league_menu
-  puts "League Options Menu:
+  puts "------------------------------
+  League Options Menu:
+
   1. Get list of all soccer leagues
   2. Search leagues by country
-  3. Find league stats
-  4. Return to previous menu
+  3. Find the largest league in the database
+  4. Find the smallest league in the database
+  5. Find the oldest league in the database
+  6. Find the youngest league in the database
+  7. Select a league to learn more
+  8. Return to previous menu
 
 
-    h - help
-    q - exit program
+  press 'h' for help
+  press 'q' to exit the program
+  ------------------------------------
                               "
   get_user_input_from_league_menu
   get_top_level_user_input
@@ -498,9 +509,16 @@ def get_user_input_from_league_menu
       when "2"
         find_league_by_country
       when "3"
-        puts "-------------------------------"
-        league_stats_menu
+        find_largest_league
       when "4"
+        find_smallest_league
+      when "5"
+        find_oldest_league
+      when "6"
+        find_youngest_league
+      when "7"
+        league_stats_menu
+      when "8"
         puts "Welcome back!"
         top_menu
       break
@@ -543,7 +561,8 @@ end
 ########## Option 3 ###########
 
 def league_stats_menu
-  puts "League Stats Options Menu:
+  puts "-------------------------------------------------
+  League Stats Options Menu:
 
   1. Get list of all teams in a league
   2. Find number of players in a league
@@ -554,15 +573,13 @@ def league_stats_menu
   7. Find league's country
   8. Find the oldest team in a league
   9. Find the youngest team in a league
-  10. Find the largest league in the database
-  11.Find the smallest league in the database
-  12.Find the oldest league in the database
-  13.Find the youngest league in the database
 
-  14. Return to League Options Menu
+  10. Return to League Options Menu
 
   h - help
   q - exit program
+
+  -------------------------------------------------------
 
   Please enter one of the above option numbers:"
 
@@ -594,14 +611,6 @@ def get_user_input_from_league_stats
       when "9"
         find_youngest_team_in_league
       when "10"
-        find_largest_league
-      when "11"
-        find_smallest_league
-      when "12"
-        find_oldest_league
-      when "13"
-        find_youngest_league
-      when "14"
         puts "Welcome back!"
         league_menu
         break
