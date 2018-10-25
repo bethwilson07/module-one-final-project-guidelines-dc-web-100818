@@ -82,17 +82,25 @@ def search_player_by_country #have to enter in exact data
   puts Player.all_players_from_nation(user_input)
   puts "
   --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
   player_menu
 end
 
 ### Player option 2 ###
 def player_stats_menu
-  puts "Player Stats
-  1. Player's years with a team
-  2. Shortest player in database
-  3. Tallest player in database
-  4. Player age by player
-  5. Return to Player Options Menu
+  puts "Player Stats Options
+
+  1. Find a player's team
+  2. Find a player's amount of time with his team
+  3. Find a player's age
+  4. Get a player's position
+  5. Get a player's history/description
+  6. Find a player's nationality
+  7. Find the tallest player in the database
+  8. Find the shortest player in the database
+
+  9. Return to Player Options Menu
 
 
   Please enter one of the above option numbers:"
@@ -106,14 +114,22 @@ def get_user_input_from_player_stats
     user_input = gets.downcase.strip
     case user_input
       when "1"
-        player_years
+        find_player_team
       when "2"
-        find_shortest_player
+        player_years_with_team
       when "3"
-        find_tallest_player
-      when "4"
         find_player_age
+      when "4"
+        find_player_posiiton
       when "5"
+        find_player_description
+      when "6"
+        find_player_nationality
+      when "7"
+        find_tallest_player
+      when "8"
+        find_shortest_player
+      when "9"
         puts "Welcome back!"
         player_menu
       break
@@ -123,8 +139,24 @@ def get_user_input_from_player_stats
   end
 end
 
-### Player Stats option 1 (find player's years with team) ####
-def player_years
+## Player Stats option 1 (find player's team) ###
+
+def find_player_team
+  user_input = ""
+  puts "Enter the player:"
+  user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+  player = Player.find_by_name(user_input)
+  puts "#{player.name} plays for #{player.team.name}."
+  puts "
+  --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
+  player_stats_menu
+end
+
+### Player Stats option 2 (find player's years with team) ####
+
+def player_years_with_team
   user_input = ""
   puts "Enter the player:"
   user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
@@ -132,27 +164,12 @@ def player_years
   puts "#{player.name} has been with #{player.team.name} for #{player.player_time_with_team}."
   puts "
   --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
   player_stats_menu
 end
 
-## Player stats option 2 (find shortest player in database) ###
-
-def find_shortest_player
-  puts Player.shortest_player
-  puts "
-  --------------------------------------------"
-  player_stats_menu
-end
-
-### Player stats option 3 (find tallest player in database) ###
-def find_tallest_player
-  puts Player.tallest_player
-  puts "
-  --------------------------------------------"
-  player_stats_menu
-end
-
-## Player stats option 4 (find player age by player) ###
+## Player stats option 3 (find player's age) ###
 
 def find_player_age
   user_input = ""
@@ -162,6 +179,75 @@ def find_player_age
   puts "#{player.name} is #{player.age} years old."
   puts "
   --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
+  player_stats_menu
+end
+
+## Player stats option 4 (find player's position) ###
+
+def find_player_posiiton
+  user_input = ""
+  puts "Enter the player:"
+  user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+  player = Player.find_by_name(user_input)
+  puts "#{player.name} is a #{player.position} for #{player.team.name}."
+  puts "
+  --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
+  player_stats_menu
+end
+
+## Player stats option 5 (get player's history/description) ###
+
+def find_player_description
+  user_input = ""
+  puts "Enter the player:"
+  user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+  player = Player.find_by_name(user_input)
+  puts player.player_description
+  puts "
+  --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
+  player_stats_menu
+end
+
+## player stats option 6 (find a player's nationality) ####
+
+def find_player_nationality
+  user_input = ""
+  puts "Enter the player:"
+  user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+  player = Player.find_by_name(user_input)
+  puts "#{player.name} is from #{player.nationality}."
+  puts "
+  --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
+  player_stats_menu
+end
+
+## Player stats option 7 (find tallest player in database) ###
+
+def find_tallest_player
+  puts Player.tallest_player
+  puts "
+  --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
+  player_stats_menu
+end
+
+## Player stats option 8 (find shortest player in database) ###
+
+def find_shortest_player
+  puts Player.shortest_player
+  puts "
+  --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
   player_stats_menu
 end
 
