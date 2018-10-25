@@ -62,8 +62,9 @@ class League < ActiveRecord::Base
   end
 
   def self.smallest
-    smallest = self.all.sort_by {|league| league.league_size }[0]
-    "The smallest league is #{smallest.name} with #{smallest.league_size} teams."
+    smallest = self.all.sort_by {|league| league.league_size }
+    small = smallest.select{|league| league.league_size != 0}[0]
+    "The smallest league is #{small.name} with #{small.league_size} teams."
   end
 
   def self.by_nation(nation)
@@ -93,16 +94,24 @@ class League < ActiveRecord::Base
   end
 
   def list_teams
-    self.teams.collect {|team| team.name}
+    teams = self.teams.collect {|team| team.name}
+    puts teams
   end
+
 
   def player_count
     self.players.count
   end
 
+  def list_players
+    players = self.teams.collect {|team| team.players}
+    player_names = self.players.collect {|player| player.name}
+    puts player_names
+  end
+
   def managers
     team_managers = self.teams.collect {|team| "#{team.manager} - #{team.name}" }.uniq
-
+    puts team_managers
     # team_managers.each_with_index do |manager, index|
     #   puts "#{index + 1}. #{manager}"
     # end

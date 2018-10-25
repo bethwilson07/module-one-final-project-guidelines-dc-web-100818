@@ -51,9 +51,13 @@ class Player < ActiveRecord::Base
     tallest = self.refined_height_data.sort_by {|player| player.height.to_f}[-1]
     tall_players_arr = Player.where(height: tallest.height).map {|player| player.name}
     if tall_players_arr.count > 1
-    "The tallest players on our record are #{self.oxford(tall_players_arr)} with a height of #{tallest.height.to_f} m or #{(tallest.height.to_f * 3.3).round(2)} ft"
+    "---------------------------------
+
+    The tallest players on our record are #{self.oxford(tall_players_arr)} with a height of #{tallest.height.to_f} m or #{(tallest.height.to_f * 3.3).round(2)} ft"
     else
-    "The tallest player on our record is #{self.oxford(tall_players_arr)} with a height of #{tallest.height.to_f} m or #{(tallest.height.to_f * 3.3).round(2)} ft"
+    "---------------------------------
+    
+    The tallest player on our record is #{self.oxford(tall_players_arr)} with a height of #{tallest.height.to_f} m or #{(tallest.height.to_f * 3.3).round(2)} ft"
     end
   end
 
@@ -61,9 +65,13 @@ class Player < ActiveRecord::Base
    shortest = self.refined_height_data.sort_by {|player| player.height.to_f}[0]
    short_players_arr = Player.where(height: shortest.height).map {|player| player.name}
    if short_players_arr.count > 1
-    "The shortest players on our record are #{self.oxford(short_players_arr)} with a height of #{shortest.height.to_f} m or #{(shortest.height.to_f * 3.3).round(2)} ft"
+    "------------------------------------
+
+    The shortest players on our record are #{self.oxford(short_players_arr)} with a height of #{shortest.height.to_f} m or #{(shortest.height.to_f * 3.3).round(2)} ft"
    else
-    "The shortest player on our record is #{self.oxford(short_players_arr)} with a height of #{shortest.height.to_f} m or #{(shortest.height.to_f * 3.3).round(2)} ft"
+    "------------------------------------
+
+    The shortest player on our record is #{self.oxford(short_players_arr)} with a height of #{shortest.height.to_f} m or #{(shortest.height.to_f * 3.3).round(2)} ft"
    end
   end
 
@@ -83,7 +91,9 @@ class Player < ActiveRecord::Base
     # bday = Date.strptime(oldest_player.birthdate, '%Y-%m-%d')
     # age = (DateTime.now.to_date - bday).to_i/365
 
-    "#{oldest_player.name} is the oldest player. He is #{oldest_player.age} years old."
+    "------------------------------
+
+    #{oldest_player.name} is the oldest player. He is #{oldest_player.age} years old."
 
     # binding.pry
     # ''
@@ -101,7 +111,9 @@ class Player < ActiveRecord::Base
     # bday = Date.strptime(youngest_player.birthdate, '%Y-%m-%d')
     # age = (DateTime.now.to_date - bday).to_i/365
 
-    "#{youngest_player.name} is the oldest player. He is #{youngest_player.age} years old."
+    "--------------------------------
+
+    #{youngest_player.name} is the oldest player. He is #{youngest_player.age} years old."
 
     # youngest_player = self.all.sort_by {|player| player.player_age}[0]
     # young_player_arr = Player.where(birthdate: youngest_player.birthdate).map {|player| player.name}
@@ -115,9 +127,11 @@ class Player < ActiveRecord::Base
   def self.all_players_from_nation(nation) #works
     players = self.all.select {|player| player.nationality == nation}.collect {|player| player.name}
     if players.count >1
-      "The players from #{nation} are #{self.oxford(players)}."
+      "--------------
+      The players from #{nation} are #{self.oxford(players)}."
     else
-      "#{player} is the only player from #{nation}."
+      "--------------
+      #{player} is the only player from #{nation}."
     end
   end
 
