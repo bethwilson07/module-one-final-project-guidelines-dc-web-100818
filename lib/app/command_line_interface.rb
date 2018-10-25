@@ -17,25 +17,25 @@ def tells_user_what_to_do
 
   Please enter one of the above option numbers:
   "
+  get_top_level_user_input
 end
 
 def get_top_level_user_input #only inputing numbers works.
   user_input = ""
-  tells_user_what_to_do
   while user_input
     user_input = gets.downcase.strip
     case user_input
-      when "1" || "research players"
+      when "1"
         player_menu
-      when "2" || "research teams"
+      when "2"
         team_menu
-      when "3" || "research leagues"
+      when "3"
         league_options
-      when "4" || "help"
+      when "4"
         help
-      when "5" || "exit"
+      when "5"  #exits program only at top level -- not when called after looping through other methods
         exit_soccer
-        break
+      break
       else
         "Please enter a valid option number."
       end
@@ -65,7 +65,7 @@ def get_user_input_from_player_menu
         puts "-------------------------------"
         player_stats_menu
       when "3"
-        puts "Welcome back!"
+        puts "Welcome back!" ###doesn't exit program when we return to top level
         tells_user_what_to_do
       break
     else
@@ -74,7 +74,7 @@ def get_user_input_from_player_menu
   end
 end
 
-
+### Player option 1 ####
 def search_player_by_country #have to enter in exact data
   user_input = ""
   puts "To search for players from a particular country, enter the country:"
@@ -83,42 +83,88 @@ def search_player_by_country #have to enter in exact data
   puts "
   --------------------------------------------"
   player_menu
-  get_user_input_from_player_menu
 end
 
+### Player option 2 ###
 def player_stats_menu
   puts "Player Stats
   1. Player's years with a team
   2. Shortest player in database
   3. Tallest player in database
   4. Player age by player
-  5. Return to Player Options Menu "
+  5. Return to Player Options Menu
+
+
+  Please enter one of the above option numbers:"
+
+  get_user_input_from_player_stats
 end
 
 def get_user_input_from_player_stats
   user_input = ""
   while user_input
-    puts "Please enter one of the above option numbers:"
     user_input = gets.downcase.strip
     case user_input
       when "1"
-        "method for player's years with a team"
+        player_years
       when "2"
-        puts "-------------------------------"
-        "method for shortest player in database"
+        find_shortest_player
       when "3"
-        "method tallest player "
+        find_tallest_player
       when "4"
-        "player age by player"
+        find_player_age
       when "5"
         puts "Welcome back!"
         player_menu
       break
     else
-      "Please enter a valid option number."
+      puts "Please enter a valid option number."
     end
   end
 end
+
+### Player Stats option 1 (find player's years with team) ####
+def player_years
+  user_input = ""
+  puts "Enter the player:"
+  user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+  player = Player.find_by_name(user_input)
+  puts "#{player.name} has been with #{player.team.name} for #{player.player_time_with_team}."
+  puts "
+  --------------------------------------------"
+  player_stats_menu
+end
+
+## Player stats option 2 (find shortest player in database) ###
+
+def find_shortest_player
+  puts Player.shortest_player
+  puts "
+  --------------------------------------------"
+  player_stats_menu
+end
+
+### Player stats option 3 (find tallest player in database) ###
+def find_tallest_player
+  puts Player.tallest_player
+  puts "
+  --------------------------------------------"
+  player_stats_menu
+end
+
+## Player stats option 4 (find player age by player) ###
+
+def find_player_age
+  user_input = ""
+  puts "Enter the player:"
+  user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+  player = Player.find_by_name(user_input)
+  puts "#{player.name} is #{player.age} years old."
+  puts "
+  --------------------------------------------"
+  player_stats_menu
+end
+
 
 ######################### OPTION 2 TEAM METHODS ###########################
 
@@ -139,6 +185,8 @@ def team_options
   user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
   team = Team.find_by_name(user_input)
   puts team.get_team_roster
+
+
 end
 
 ############################## OPTION 3 LEAGUE METHODS ###########################
@@ -167,6 +215,7 @@ def help
   4. Help
   5. Exit program
   ------------------------------"
+  get_top_level_user_input
 end
 
 def player
