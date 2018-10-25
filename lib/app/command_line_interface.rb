@@ -35,7 +35,6 @@ def get_top_level_user_input #only inputing numbers works.
         help
       when "5"  #exits program only at top level -- not when called after looping through other methods
         exit_soccer
-      break
       else
         "Please enter a valid option number."
       end
@@ -49,8 +48,13 @@ def player_menu
   1. Search players by country
   2. Find player stats
   3. Return to previous menu
-  "
+
+
+    h - help
+    q - exit program
+                              "
   get_user_input_from_player_menu
+  get_top_level_user_input
 end
 
 def get_user_input_from_player_menu
@@ -68,6 +72,11 @@ def get_user_input_from_player_menu
         puts "Welcome back!" ###doesn't exit program when we return to top level
         tells_user_what_to_do
       break
+      when "h"
+        help
+      break
+      when "q"
+        exit_soccer
     else
       "Please enter a valid option number."
     end
@@ -102,10 +111,13 @@ def player_stats_menu
 
   9. Return to Player Options Menu
 
+  h - help
+  q - exit program
 
   Please enter one of the above option numbers:"
 
   get_user_input_from_player_stats
+  get_top_level_user_input
 end
 
 def get_user_input_from_player_stats
@@ -132,9 +144,14 @@ def get_user_input_from_player_stats
       when "9"
         puts "Welcome back!"
         player_menu
-      break
-    else
-      puts "Please enter a valid option number."
+        break
+      when "h"
+        help
+        break
+      when "q"
+        exit_soccer
+      else
+        puts "Please enter a valid option number."
     end
   end
 end
@@ -304,10 +321,7 @@ def help
   get_top_level_user_input
 end
 
-def player
-  puts "To search within players..."
-end
-
 def exit_soccer
   puts "Goodbye"
+  exit
 end
