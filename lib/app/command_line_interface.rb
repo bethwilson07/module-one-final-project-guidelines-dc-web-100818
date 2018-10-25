@@ -50,6 +50,7 @@ def player_menu
   2. Find player stats
   3. Return to previous menu
   "
+  get_user_input_from_player_menu
 end
 
 def get_user_input_from_player_menu
@@ -61,6 +62,7 @@ def get_user_input_from_player_menu
       when "1"
         search_player_by_country
       when "2"
+        puts "-------------------------------"
         player_stats_menu
       when "3"
         puts "Welcome back!"
@@ -78,6 +80,10 @@ def search_player_by_country #have to enter in exact data
   puts "To search for players from a particular country, enter the country:"
   user_input = gets.capitalize.strip.to_s
   puts Player.all_players_from_nation(user_input)
+  puts "
+  --------------------------------------------"
+  player_menu
+  get_user_input_from_player_menu
 end
 
 def player_stats_menu
@@ -85,7 +91,33 @@ def player_stats_menu
   1. Player's years with a team
   2. Shortest player in database
   3. Tallest player in database
-  4. Player age by player"
+  4. Player age by player
+  5. Return to Player Options Menu "
+end
+
+def get_user_input_from_player_stats
+  user_input = ""
+  while user_input
+    puts "Please enter one of the above option numbers:"
+    user_input = gets.downcase.strip
+    case user_input
+      when "1"
+        "method for player's years with a team"
+      when "2"
+        puts "-------------------------------"
+        "method for shortest player in database"
+      when "3"
+        "method tallest player "
+      when "4"
+        "player age by player"
+      when "5"
+        puts "Welcome back!"
+        player_menu
+      break
+    else
+      "Please enter a valid option number."
+    end
+  end
 end
 
 ######################### OPTION 2 TEAM METHODS ###########################
