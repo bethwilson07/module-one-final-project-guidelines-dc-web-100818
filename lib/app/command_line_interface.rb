@@ -21,14 +21,14 @@ end
 
 def get_top_level_user_input #only inputing numbers works.
   user_input = ""
+  tells_user_what_to_do
   while user_input
-    tells_user_what_to_do
     user_input = gets.downcase.strip
     case user_input
       when "1" || "research players"
         player_menu
       when "2" || "research teams"
-        team_options
+        team_menu
       when "3" || "research leagues"
         league_options
       when "4" || "help"
@@ -42,7 +42,7 @@ def get_top_level_user_input #only inputing numbers works.
     end
 end
 
-#############################  OPTION 1: PLAYER INFO ###################################
+#############################  OPTION 1: PLAYER METHODS ###################################
 
 def player_menu
   puts "Player Menu Options:
@@ -63,6 +63,7 @@ def get_user_input_from_player_menu
       when "2"
         player_stats_menu
       when "3"
+        puts "Welcome back!"
         tells_user_what_to_do
       break
     else
@@ -72,7 +73,7 @@ def get_user_input_from_player_menu
 end
 
 
-def search_player_by_country
+def search_player_by_country #have to enter in exact data
   user_input = ""
   puts "To search for players from a particular country, enter the country:"
   user_input = gets.capitalize.strip.to_s
@@ -86,6 +87,8 @@ def player_stats_menu
   3. Tallest player in database
   4. Player age by player"
 end
+
+######################### OPTION 2 TEAM METHODS ###########################
 
 def team_menu
   puts "Team Menu Options
@@ -106,13 +109,20 @@ def team_options
   puts team.get_team_roster
 end
 
+############################## OPTION 3 LEAGUE METHODS ###########################
+
 def league_options
   user_input = ""
   puts "To get a list of all soccer leagues, enter 'yes'"
-  user_input = "yes"
+  user_input = gets.chomp
+  if user_input == "yes"
   puts League.all.collect{|league| league.name}
+  else
+  puts "You're no fun."
+  end
 end
 
+############################ OTHER METHODS ################################
 
 
 
