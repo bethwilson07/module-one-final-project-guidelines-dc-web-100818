@@ -93,11 +93,18 @@ class League < ActiveRecord::Base
   end
 
   def list_teams
-    self.teams.collect {|team| team.name}
+    teams = self.teams.collect {|team| team.name}
+    puts teams
   end
 
   def player_count
     self.players.count
+  end
+
+  def list_players
+    players = self.teams.collect {|team| team.players}
+    player_names = self.players.collect {|player| player.name}
+    puts player_names
   end
 
   def managers

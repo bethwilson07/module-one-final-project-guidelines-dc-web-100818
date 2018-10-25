@@ -446,12 +446,47 @@ end
 ######### League Stats Options Methods ##############
 
 def list_of_teams_in_league
+  user_input = ""
+  puts "Enter the league:"
+  user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+  league = League.find_by_name(user_input)
+  puts "----------------------------
+  #{league.name}'s teams are: "
+  puts "#{league.list_teams}"
+  puts "
+  --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
+  league_stats_menu
 end
 
 def count_players_in_league
+  user_input = ""
+  puts "Enter the league:"
+  user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+  league = League.find_by_name(user_input)
+  puts "----------------------------
+  #{league.name} has #{league.player_count} players."
+  puts "
+  --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
+  league_stats_menu
 end
 
 def list_of_players_in_league
+  user_input = ""
+  puts "Enter the league:"
+  user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+  league = League.find_by_name(user_input)
+  puts "----------------------------
+  #{league.name}'s players are: "
+  puts "#{league.list_players}"
+  puts "
+  --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
+  league_stats_menu
 end
 
 def list_of_managers_in_league
