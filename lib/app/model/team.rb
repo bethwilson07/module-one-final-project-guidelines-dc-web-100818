@@ -2,7 +2,7 @@ require 'date'
 
 class Team < ActiveRecord::Base
   has_many :players
-  belongs_to :leagues
+  belongs_to :league
 
   def get_team_roster #works
     self.players.collect {|player| player.name}

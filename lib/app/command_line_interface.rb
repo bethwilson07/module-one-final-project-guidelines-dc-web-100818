@@ -20,7 +20,7 @@ def tells_user_what_to_do
   get_top_level_user_input
 end
 
-def get_top_level_user_input #only inputing numbers works.
+def get_top_level_user_input
   user_input = ""
   while user_input
     user_input = gets.downcase.strip
@@ -30,10 +30,14 @@ def get_top_level_user_input #only inputing numbers works.
       when "2"
         team_menu
       when "3"
-        league_options
+        league_menu
       when "4"
         help
-      when "5"  #exits program only at top level -- not when called after looping through other methods
+      when "h"
+        help
+      when "5"
+        exit_soccer
+      when "q"
         exit_soccer
       else
         "Please enter a valid option number."
@@ -44,7 +48,7 @@ end
 #############################  OPTION 1: PLAYER METHODS ###################################
 
 def player_menu
-  puts "Player Menu Options:
+  puts "Player Options Menu:
   1. Search players by country
   2. Find player stats
   3. Return to previous menu
@@ -69,7 +73,7 @@ def get_user_input_from_player_menu
         puts "-------------------------------"
         player_stats_menu
       when "3"
-        puts "Welcome back!" ###doesn't exit program when we return to top level
+        puts "Welcome back!"
         tells_user_what_to_do
       break
       when "h"
@@ -98,7 +102,7 @@ end
 
 ### Player option 2 ###
 def player_stats_menu
-  puts "Player Stats Options
+  puts "Player Stats Options Menu:
 
   1. Find a player's team
   2. Find a player's amount of time with his team
@@ -294,16 +298,192 @@ end
 
 ############################## OPTION 3 LEAGUE METHODS ###########################
 
-def league_options
+def league_menu
+  puts "League Options Menu:
+  1. Get list of all soccer leagues
+  2. Search leagues by country
+  3. Find league stats
+  4. Return to previous menu
+
+
+    h - help
+    q - exit program
+                              "
+  get_user_input_from_league_menu
+  get_top_level_user_input
+end
+
+def get_user_input_from_league_menu
   user_input = ""
-  puts "To get a list of all soccer leagues, enter 'yes'"
-  user_input = gets.chomp
-  if user_input == "yes"
-  puts League.all.collect{|league| league.name}
-  else
-  puts "You're no fun."
+  while user_input
+    puts "Please enter one of the above option numbers:"
+    user_input = gets.downcase.strip
+    case user_input
+      when "1"
+        list_of_all_leagues
+      when "2"
+        find_league_by_country
+      when "3"
+        puts "-------------------------------"
+        league_stats_menu
+      when "4"
+        puts "Welcome back!"
+        tells_user_what_to_do
+      break
+      when "h"
+        help
+      break
+      when "q"
+        exit_soccer
+        exit
+    else
+      "Please enter a valid option number."
+    end
   end
 end
+
+########## League Menu Options ###############
+
+####### Option 1 ###########
+def list_of_all_leagues
+  puts League.all.collect {|league| league.name}
+  puts "
+  --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
+  league_menu
+end
+########## Option 2 #############
+def find_league_by_country
+  user_input = ""
+  puts "To search for leagues from a particular country, enter the country:"
+  user_input = gets.capitalize.strip.to_s
+  puts League.by_nation(user_input)
+  puts "
+  --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
+  league_menu
+end
+
+########## Option 3 ###########
+
+def league_stats_menu
+  puts "League Stats Options Menu:
+
+  1. Get list of all teams in a league
+  2. Find number of players in a league
+  3. Find all players from a league
+  4. Get a list of managers in a league
+  5. Get a league's history/description
+  6. Get the year a league was founded and its age
+  7. Find league's country
+  8. Find the oldest team in a league
+  9. Find the youngest team in a league
+  10. Find the largest league in the database
+  11.Find the smallest league in the database
+  12.Find the oldest league in the database
+  13.Find the youngest league in the database
+
+  14. Return to League Options Menu
+
+  h - help
+  q - exit program
+
+  Please enter one of the above option numbers:"
+
+  get_user_input_from_league_stats
+  get_top_level_user_input
+end
+
+def get_user_input_from_league_stats
+  user_input = ""
+  while user_input
+    user_input = gets.downcase.strip
+    case user_input
+      when "1"
+        list_of_teams_in_league
+      when "2"
+        count_players_in_league
+      when "3"
+        list_of_players_in_league
+      when "4"
+        list_of_managers_in_league
+      when "5"
+        get_league_description
+      when "6"
+        get_year_founded_and_age
+      when "7"
+        get_league_country
+      when "8"
+        find_oldest_team_in_league
+      when "9"
+        find_youngest_team_in_league
+      when "10"
+        find_largest_league
+      when "11"
+        find_smallest_league
+      when "12"
+        find_oldest_league
+      when "13"
+        find_youngest_league
+      when "14"
+        puts "Welcome back!"
+        league_menu
+        break
+      when "h"
+        help
+        break
+      when "q"
+        exit_soccer
+        exit
+      else
+        puts "Please enter a valid option number."
+    end
+  end
+end
+
+######### League Stats Options Methods ##############
+
+def list_of_teams_in_league
+end
+
+def count_players_in_league
+end
+
+def list_of_players_in_league
+end
+
+def list_of_managers_in_league
+end
+
+def get_league_description
+end
+
+def get_year_founded_and_age
+end
+
+def get_league_country
+end
+
+def find_oldest_team_in_league
+end
+
+def find_youngest_team_in_league
+end
+
+def find_largest_league
+end
+
+def find_smallest_league
+end
+
+def find_oldest_league
+end
+
+def find_youngest_league
+end
+
 
 ############################ OTHER METHODS ################################
 
