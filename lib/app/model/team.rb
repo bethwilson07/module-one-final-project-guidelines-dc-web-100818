@@ -2,7 +2,7 @@ require 'date'
 
 class Team < ActiveRecord::Base
   has_many :players
-  belongs_to :leagues
+  belongs_to :league
 
   def get_team_roster #works
     self.players.collect {|player| player.name}
@@ -47,7 +47,7 @@ class Team < ActiveRecord::Base
     nonzero_ages
   end
 
-  def self.oldest_team #works
+  def self.oldest #works
     oldest_team = self.refined_age_data.sort_by {|team| team.team_age}[-3]
     old_team_arr = Team.where(year_founded: oldest_team.year_founded).map {|team| team.name}
     if old_team_arr.count > 1
@@ -57,7 +57,7 @@ class Team < ActiveRecord::Base
     end
   end
 
-  def self.youngest_team #works
+  def self.youngest #works
     youngest_team = self.all.sort_by {|team| team.team_age}[0]
     young_team_arr = Team.where(year_founded: youngest_team.year_founded).map {|team| team.name}
     if young_team_arr.count > 1
@@ -68,22 +68,22 @@ class Team < ActiveRecord::Base
   end
 
   def youngest_player #works
-    young_player = self.players.sort_by {|player| player.player_age }[0]
-    young_players = self.players.select {|player| player.player_age == young_player.player_age}.collect {|player| player.name}
+    young_player = self.players.sort_by {|player| player.age }[0]
+    young_players = self.players.select {|player| player.age == young_player.age}.collect {|player| player.name}
     if young_players.count > 1
-      "#{oxford(young_players)} are the youngest players. They are #{young_player.player_age} years old."
+      "#{oxford(young_players)} are the youngest players. They are #{young_player.age} years old."
     else
-      "#{young_players.join(" ")} is the youngest player. He is #{young_player.player_age} years old."
+      "#{young_players.join(" ")} is the youngest player. He is #{young_player.age} years old."
     end
   end
 
   def oldest_player #works
-    old_player = self.players.sort_by {|player| player.player_age }[-1]
-    old_players = self.players.select {|player| player.player_age == old_player.player_age}.collect {|player| player.name}
+    old_player = self.players.sort_by {|player| player.age }[-1]
+    old_players = self.players.select {|player| player.age == old_player.age}.collect {|player| player.name}
     if old_players.count > 1
-      "#{oxford(old_players)} are the oldest players. They are #{old_player.player_age} years old."
+      "#{oxford(old_players)} are the oldest players. They are #{old_player.age} years old."
     else
-      "#{old_players.join(" ")} is the oldest player. He is #{old_player.player_age} years old."
+      "#{old_players.join(" ")} is the oldest player. He is #{old_player.age} years old."
     end
   end
 

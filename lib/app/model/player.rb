@@ -4,16 +4,16 @@ class Player < ActiveRecord::Base
   belongs_to :team
   delegate :league, :to => :team
 
-  def validate_date(string)
-    format_ok = string.match(/\d{4}-\d{2}-\d{2}/)
-    parseable = Date.strptime(string, '%Y-%m-%d') rescue false
-
-    if string == 'never' || format_ok && parseable
-      puts "true"
-    else
-      puts "false"
-    end
-  end
+  # def validate_date(string)
+  #   format_ok = string.match(/\d{4}-\d{2}-\d{2}/)
+  #   parseable = Date.strptime(string, '%Y-%m-%d') rescue false
+  #
+  #   if string == 'never' || format_ok && parseable
+  #     puts "true"
+  #   else
+  #     puts "false"
+  #   end
+  # end
 
   def age #works on players with valid date
     if self.birthdate != nil
