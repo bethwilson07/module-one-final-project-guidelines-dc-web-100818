@@ -3,7 +3,7 @@ def welcome
   puts "Hello! Welcome to SoccerInfo."
 end
 
-def tells_user_what_to_do
+def top_menu
   puts "----------------------------
   Menu Options:
   1. Research players
@@ -57,11 +57,11 @@ def player_menu
     h - help
     q - exit program
                               "
-  get_user_input_from_player_menu
+  player_options
   get_top_level_user_input
 end
 
-def get_user_input_from_player_menu
+def player_options
   user_input = ""
   while user_input
     puts "Please enter one of the above option numbers:"
@@ -74,7 +74,7 @@ def get_user_input_from_player_menu
         player_stats_menu
       when "3"
         puts "Welcome back!"
-        tells_user_what_to_do
+        top_menu
       break
       when "h"
         help
@@ -328,7 +328,7 @@ def get_user_input_from_league_menu
         league_stats_menu
       when "4"
         puts "Welcome back!"
-        tells_user_what_to_do
+        top_menu
       break
       when "h"
         help
@@ -376,7 +376,7 @@ def league_stats_menu
   3. Find all players from a league
   4. Get a list of managers in a league
   5. Get a league's history/description
-  6. Get the year a league was founded and its age
+  6. Get the year a league was founded, its age, & number of teams.
   7. Find league's country
   8. Find the oldest team in a league
   9. Find the youngest team in a league
@@ -412,7 +412,7 @@ def get_user_input_from_league_stats
       when "5"
         get_league_description
       when "6"
-        get_year_founded_and_age
+        get_year_founded_and_age_and_count
       when "7"
         get_league_country
       when "8"
@@ -490,38 +490,126 @@ def list_of_players_in_league
 end
 
 def list_of_managers_in_league
+  user_input = ""
+  puts "Enter the league:"
+  user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+  league = League.find_by_name(user_input)
+  puts "----------------------------
+  #{league.name}'s managers are: "
+  puts "#{league.managers}"
+  puts "
+  --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
+  league_stats_menu
 end
 
 def get_league_description
+  user_input = ""
+  puts "Enter the league:"
+  user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+  league = League.find_by_name(user_input)
+  puts "#{league.description}"
+  puts "
+  --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
+  league_stats_menu
 end
 
-def get_year_founded_and_age
+def get_year_founded_and_age_and_count
+  user_input = ""
+  puts "Enter the league:"
+  user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+  league = League.find_by_name(user_input)
+  puts "----------------------------
+  #{league.name} was founded in #{league.year_founded}.
+  It is #{league.league_age} years old and has #{league.league_size} teams."
+  puts "
+  --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
+  league_stats_menu
 end
 
 def get_league_country
+  user_input = ""
+  puts "Enter the league:"
+  user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+  league = League.find_by_name(user_input)
+  puts "----------------------------
+  #{league.name} is based out of #{league.nation}."
+  puts "
+  --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
+  league_stats_menu
 end
 
 def find_oldest_team_in_league
+  user_input = ""
+  puts "Enter the league:"
+  user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+  league = League.find_by_name(user_input)
+  puts league.oldest_team
+  puts"
+  --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
+  league_stats_menu
 end
 
 def find_youngest_team_in_league
+  user_input = ""
+  puts "Enter the league:"
+  user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+  league = League.find_by_name(user_input)
+  puts league.youngest_team
+  puts "
+  --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
+  league_stats_menu
 end
 
 def find_largest_league
+  puts league = League.largest
+  puts "
+  --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
+  league_stats_menu
 end
 
 def find_smallest_league
+  puts league = League.smallest
+  puts "
+  --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
+  league_stats_menu
 end
 
 def find_oldest_league
+  puts league = League.oldest
+  puts "
+  --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
+  league_stats_menu
 end
 
 def find_youngest_league
+  puts league = League.youngest
+  puts "
+  --------------------------------------------"
+  puts "Hit enter to return to previous menu"
+  gets.chomp
+  league_stats_menu
 end
 
 
 ############################ OTHER METHODS ################################
-
 
 
 def help
