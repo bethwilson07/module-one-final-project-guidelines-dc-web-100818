@@ -15,10 +15,10 @@ class Player < ActiveRecord::Base
     end
   end
 
-  def player_age #works on players with valid date
+  def age #works on players with valid date
     if self.birthdate != nil
-    player_year = self.birthdate[0...4].to_i
-    Time.now.year - player_year
+      player_year = self.birthdate[0...4].to_i
+      Time.now.year - player_year
     else
       "invalid date"
     end
@@ -67,28 +67,49 @@ class Player < ActiveRecord::Base
    end
   end
 
-  def self.refined_birthdate_data #implicit conversion of nil to string
-    refined = self.all.select {|player| !player.birthdate.to_s.nil? && player.birthdate.to_s != ""}
+  def self.refined_birthdate_data
+    self.all.select { |player| !player.birthdate.nil? && Date.valid_civil?(player.birthdate[0..3].to_i, player.birthdate[5..6].to_i, player.birthdate[8..9].to_i) }
+
+    #!player.birthdate.to_s.nil? && player.birthdate.to_s != ""}
   end
 
-  def self.oldest_player #invalid date
-    oldest_player = self.refined_birthdate_data.sort_by{|player| player.player_age}[-1]
-    old_player_arr = Player.where(birthdate: oldest_player.birthdate).map {|player| player.name}
-    if old_player_arr.count > 1
-      "#{self.oxford(old_player_arr)} are the oldest players. They are #{oldest_player.player_age} years old."
-    else
-      "#{old_player_arr.join(" ")} is the oldest player. He is #{oldest_player.player_age} years old."
-    end
+  def self.oldest
+    oldest_player = self.refined_birthdate_data.sort_by{|player| player.age}[-1]
+
+    # year = oldest_playerplayer.birthdate[0..3].to_i
+    # month = oldest_player.birthdate[5..6].to_i
+    # day = player.birthdate[8..9].to_i
+
+    # bday = Date.strptime(oldest_player.birthdate, '%Y-%m-%d')
+    # age = (DateTime.now.to_date - bday).to_i/365
+
+    "#{oldest_player.name} is the oldest player. He is #{oldest_player.age} years old."
+
+    # binding.pry
+    # ''
+    # old_player_arr = Player.where(birthdate: oldest_player.birthdate).map {|player| player.name}
+    # if old_player_arr.count > 1
+    #   "#{self.oxford(old_player_arr)} are the oldest players. They are #{oldest_player.player_age} years old."
+    # else
+    #   "#{old_player_arr.join(" ")} is the oldest player. He is #{oldest_player.player_age} years old."
+    # end
   end
 
-  def self.youngest_player #invalid date
-    youngest_player = self.all.sort_by {|player| player.player_age}[0]
-    young_player_arr = Player.where(birthdate: youngest_player.birthdate).map {|player| player.name}
-    if young_player_arr.count > 1
-      "#{self.oxford(young_player_arr)} are the youngest players. They are #{youngest_player.player_age} years old."
-    else
-      "#{young_player_arr.join(" ")} is the youngest player. He is #{youngest_player.player_age} years old."
-    end
+  def self.youngest
+    youngest_player = self.refined_birthdate_data.sort_by{|player| player.age}[0]
+
+    # bday = Date.strptime(youngest_player.birthdate, '%Y-%m-%d')
+    # age = (DateTime.now.to_date - bday).to_i/365
+
+    "#{youngest_player.name} is the oldest player. He is #{youngest_player.age} years old."
+
+    # youngest_player = self.all.sort_by {|player| player.player_age}[0]
+    # young_player_arr = Player.where(birthdate: youngest_player.birthdate).map {|player| player.name}
+    # if young_player_arr.count > 1
+    #   "#{self.oxford(young_player_arr)} are the youngest players. They are #{youngest_player.player_age} years old."
+    # else
+    #   "#{young_player_arr.join(" ")} is the youngest player. He is #{youngest_player.player_age} years old."
+    # end
   end
 
   def self.all_players_from_nation(nation) #works
