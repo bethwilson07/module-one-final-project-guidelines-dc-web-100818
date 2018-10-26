@@ -56,7 +56,7 @@ class Player < ActiveRecord::Base
     The tallest players on our record are #{self.oxford(tall_players_arr)} with a height of #{tallest.height.to_f} m or #{(tallest.height.to_f * 3.3).round(2)} ft"
     else
     "---------------------------------
-    
+
     The tallest player on our record is #{self.oxford(tall_players_arr)} with a height of #{tallest.height.to_f} m or #{(tallest.height.to_f * 3.3).round(2)} ft"
     end
   end
@@ -142,4 +142,43 @@ class Player < ActiveRecord::Base
     "#{((today - date1)/365).to_f.round(0)} years"
   end
 
+  def self.parse_player_countries
+    countries = {}
+    Player.all.each do |player|
+      if countries[player.nationality].nil?
+        countries[player.nationality] =[]
+      end
+        countries[player.nationality] << player.name
+    end
+    self.print_hash(countries)
+  end
+
+  def self.print_hash(countries,spaces=4,level=0)
+    countries.each do |key,val|
+      format = "#{' '*spaces*level}#{key}:"
+      if val.is_a? Array
+        puts format
+        puts "#{val.join("\n")}\n\n"
+      else
+        puts format + "#{val.join("\n")}\n\n"
+      end
+    end
+  end
 end
+
+
+# def get_competition(team)
+#   league = team.league
+#   league_teams = league.teams.collect { |t| t.name }
+#
+#   output = "#{team.name} competes in the #{league.name}. #{team.name} plays against:\n\n"
+#
+#   league_teams.each do |t|
+#     #binding.pry
+#     if(team.name != t)
+#       output += "#{t}\n"
+#     end
+#   end
+#
+#   output
+# end
