@@ -163,6 +163,7 @@ class Player < ActiveRecord::Base
         puts format + "#{val.join("\n")}\n\n"
       end
     end
+    ""
   end
 end
 
