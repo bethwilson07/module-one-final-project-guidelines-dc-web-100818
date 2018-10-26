@@ -6,25 +6,25 @@ def welcome
   puts "Hello! Welcome to SoccerInfo."
 end
 
-def top_menu
-  puts "----------------------------
-  Menu Options:
-  1. Research players
-  2. Research teams
-  3. Research leagues
-  4. Help
-  5. Exit program
-  --------------------------------------
+def main_menu
+  puts "
+  ----------------------------
+  MAIN MENU
 
-  What would you like to search for today?
+  1. Research Players
+  2. Research Teams
+  3. Research Leagues
 
-  Please enter one of the above option numbers:
+  Press 'h' for help
+  Press 'q' to quit
+  -------------------------------
   "
-  get_top_level_user_input
+  main_menu_input
 end
 
-def get_top_level_user_input
+def main_menu_input
   user_input = ""
+
   while user_input
     user_input = gets.downcase.strip
     case user_input
@@ -33,13 +33,13 @@ def get_top_level_user_input
       when "2", "teams"
         team_menu
       when "3", "leagues"
-        league_options
-      when "4", "h", "help"
+        league_menu
+      when "h", "help"
         help
-      when "5", "q", "exit"
+      when "q", "exit", "quit"
         exit_soccer
       else
-        puts "Please enter a valid option number."
+        puts "Please enter a valid menu option or press 'h' to view the menu again."
     end
   end
 end
@@ -47,177 +47,308 @@ end
 #############################  OPTION 1: PLAYER METHODS ###################################
 
 def player_menu
-  puts "Player Options Menu:
-  1. Search players by country
-  2. Find player stats
-  3. Return to previous menu
+  puts "
+  -------------------------------
+  PLAYER MENU
+
+  1. Players By Country
+  2. Player Lookup
+  3. Tallest Player
+  4. Shortest Player
+  5. Previous Menu
 
 
-    h - help
-    q - exit program
+  Press 'h' for help
+  Press 'q' to quit
+  --------------------------------
                               "
-  player_options
-  get_top_level_user_input
+  player_menu_input
+  #main_menu_input
 end
 
-def player_options
+def player_menu_input
   user_input = ""
 
   while user_input
-    puts "Please enter one of the above option numbers:"
+    #puts "Please enter one of the above option numbers:"
     user_input = gets.downcase.strip
+
     case user_input
-      when "1"
-        search_player_by_country
-      when "2"
-        puts "-------------------------------"
-        player_stats_menu
-      when "3"
-        puts "Welcome back!"
-        top_menu
-      break
-      when "h"
-        help
-      break
-      when "q"
+    when "1", "by country"
+        puts players_by_country
+      when "2", "lookup"
+        #puts "-------------------------------"
+        #player_stats_menu
+        player_selection
+      when "3", "tallest"
+        puts Player.tallest_player
+      when "4", "shortest"
+        puts Player.shortest_player
+      when "5", "previous", "previous menu"
+        main_menu
+        break
+      #when "4",
+      when "h", "help"
+        player_menu
+        break
+      when "q", "quit"
         exit_soccer
     else
-      puts "Please enter a valid option number."
+      puts "Please enter a valid menu option or press 'h' to view the menu again."
     end
   end
 end
 
-### Player option 1 ####
-def search_player_by_country #have to enter in exact data
-  user_input = ""
-  puts "To search for players from a particular country, enter the country:"
-  user_input = gets.capitalize.strip.to_s
-  puts Player.all_players_from_nation(user_input)
-  puts "
-  --------------------------------------------"
-  puts "Hit enter to return to previous menu"
-  gets.chomp
-  player_menu
+def player_selection
+  found = []
+
+  until found.size == 1
+    puts "\nEnter a player name or press enter for a list of players: "
+
+    player_search = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+
+    found = Player.where("name LIKE ?",  "%#{player_search}%")
+
+    if found.size > 1
+      puts "\nSelect a player from the list: "
+
+      found.each do |p|
+        puts "#{p.name}"
+      end
+
+      puts "\n"
+
+      player_search = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+
+      exact_match = found.select { |p| p.name == player_search }
+
+      if exact_match.size != 0
+        found = exact_match
+      else
+        found = found.select { |p| p.name.include?(player_search) }
+      end
+    else
+      puts "\nNo player found!"
+    end
+  end
+
+  player_details_menu(found[0])
 end
 
+### Player option 1 ####
+def players_by_country #have to enter in exact data
+  #binding.pry
+
+  puts "\nEnter a country or press enter for a list of players by country: "
+
+  country = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+
+  if country == ""
+    countries = {}
+
+    Player.all.each do |player|
+      if countries[player.nationality].nil?
+        countries[player.nationality] =[]
+      end
+
+      countries[player.nationality] << player.name
+    end
+    print_hash(countries)
+  else
+    country_selection(country)
+  end
+end
+
+def print_hash(hash,spaces=4,level=0)
+  hash.each do |key,val|
+    format = "#{' '*spaces*level}#{key}:"
+    if val.is_a? Array
+      puts format
+      puts "#{val.join("\n")}\n\n"
+    else
+      puts format + "#{val.join("\n")}\n\n"
+    end
+  end
+  ""
+end
+
+def country_selection(country_search)
+  found = []
+  found_countries = []
+
+  until found_countries.size == 1
+    # puts "\nEnter a country or press enter for a list of players by country: "
+    #
+    # country_search = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+
+    found = Player.where("nationality LIKE ?",  "%#{country_search}%")
+    found_countries = found.collect { |p| p.nationality }.uniq
+    #found.distinct!
+    #binding.pry
+    if found_countries.size > 1
+      puts "\nSelect a country from the list: "
+
+      found_countries.each do |c|
+        puts "#{c}"
+      end
+
+      puts "\n"
+
+      country_search = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+
+      exact_match = found_countries.select { |c| c.downcase == country_search.downcase }
+
+      #binding.pry
+      if exact_match.size != 0
+        found = found.select { |p| p.nationality == exact_match[0] }
+        found_countries = exact_match
+      else
+        found = found.select { |p| p.nationality.downcase.include?(country_search.downcase) }
+        found_countries = found.collect {|p| p.nationality }
+      end
+    else
+      puts "\nNo country found!"
+    end
+  end
+
+  #player_details_menu(found[0])
+  #binding.pry
+  #output =
+  #found.each do |p|
+  #end
+  list_players_from_country(found, found_countries[0])
+end
+
+def list_players_from_country(players, country)
+  output = "The following players are from #{country}:"
+
+  players.each_with_index do |player, i|
+    output += "\n#{i + 1}. #{player.name}"
+  end
+
+  output
+end
 ### Player option 2 ###
-def player_stats_menu
-  puts "Player Stats Options Menu:
+def player_details_menu(player)
+  puts "
+  ---------------------------------------
+  PLAYER DETAILS
 
-  1. Find a player's team
-  2. Find a player's amount of time with his team
-  3. Find a player's age
-  4. Get a player's position
-  5. Get a player's history/description
-  6. Find a player's nationality
-  7. Find the tallest player in the database
-  8. Find the shortest player in the database
-
-  9. Return to Player Options Menu
+  1. Current Team
+  2. Age
+  3. Position
+  4. History
+  5. Nationality
+  6. Previous Menu
+  7. Main Menu
 
   h - help
   q - exit program
+  -----------------------------------------
+  "
 
-  Please enter one of the above option numbers:"
-
-  get_user_input_from_player_stats
-  get_top_level_user_input
+  player_details_menu_input(player)
 end
 
-def get_user_input_from_player_stats
+def player_details_menu_input(player)
   user_input = ""
+
   while user_input
     user_input = gets.downcase.strip
+
     case user_input
-      when "1"
-        find_player_team
-      when "2"
-        player_years_with_team
-      when "3"
-        find_player_age
-      when "4"
-        find_player_posiiton
-      when "5"
-        find_player_description
-      when "6"
-        find_player_nationality
-      when "7"
-        find_tallest_player
-      when "8"
-        find_shortest_player
-      when "9"
-        puts "Welcome back!"
+      when "1", "team", "current team"
+        puts current_team_info(player)
+      when "2", "age"
+        puts find_player_age(player)
+      when "3", "position"
+        puts find_player_position(player)
+      when "4", "description"
+        puts player.player_description
+      when "5", "nationality"
+        puts get_player_country(player)
+      when "6", "previous", "previous menu"
         player_menu
         break
+      when "7", "main", "main menu"
+        main_menu
+        break
       when "h"
-        help
+        player_details_menu(player)
         break
       when "q"
         exit_soccer
       else
-        puts "Please enter a valid option number."
+        puts "Please enter a valid menu option or press 'h' to view the menu again."
     end
   end
 end
 
+def get_player_country(player)
+  "#{player.name} comes from #{player.nationality}."
+end
+
 ## Player Stats option 1 (find player's team) ###
 
-def find_player_team
-  user_input = ""
-  puts "Enter the player:"
-  user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
-  player = Player.find_by_name(user_input)
-  puts "#{player.name} plays for #{player.team.name}."
-  puts "
-  --------------------------------------------"
-  puts "Hit enter to return to previous menu"
-  gets.chomp
-  player_stats_menu
+def current_team_info(player)
+  "#{player.name} currently plays for #{player.team.name}. #{player.name} has been with #{player.team.name} for #{player.player_time_with_team}."
+  # user_input = ""
+  # puts "Enter the player:"
+  # user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+  # player = Player.find_by_name(user_input)
+  # puts "#{player.name} plays for #{player.team.name}."
+  # puts "
+  # --------------------------------------------"
+  # puts "Hit enter to return to previous menu"
+  # gets.chomp
+  # player_stats_menu
 end
 
 ### Player Stats option 2 (find player's years with team) ####
 
-def player_years_with_team
-  user_input = ""
-  puts "Enter the player:"
-  user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
-  player = Player.find_by_name(user_input)
-  puts "#{player.name} has been with #{player.team.name} for #{player.player_time_with_team}."
-  puts "
-  --------------------------------------------"
-  puts "Hit enter to return to previous menu"
-  gets.chomp
-  player_stats_menu
-end
+# def player_years_with_team
+#   user_input = ""
+#   puts "Enter the player:"
+#   user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+#   player = Player.find_by_name(user_input)
+#   puts "#{player.name} has been with #{player.team.name} for #{player.player_time_with_team}."
+#   puts "
+#   --------------------------------------------"
+#   puts "Hit enter to return to previous menu"
+#   gets.chomp
+#   player_stats_menu
+# end
 
 ## Player stats option 3 (find player's age) ###
 
-def find_player_age
-  user_input = ""
-  puts "Enter the player:"
-  user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
-  player = Player.find_by_name(user_input)
-  puts "#{player.name} is #{player.age} years old."
-  puts "
-  --------------------------------------------"
-  puts "Hit enter to return to previous menu"
-  gets.chomp
-  player_stats_menu
+def find_player_age(player)
+  "#{player.name} is #{player.age} years old."
+  # user_input = ""
+  # puts "Enter the player:"
+  # user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+  # player = Player.find_by_name(user_input)
+  # puts "#{player.name} is #{player.age} years old."
+  # puts "
+  # --------------------------------------------"
+  # puts "Hit enter to return to previous menu"
+  # gets.chomp
+  # player_stats_menu
 end
 
 ## Player stats option 4 (find player's position) ###
 
-def find_player_posiiton
-  user_input = ""
-  puts "Enter the player:"
-  user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
-  player = Player.find_by_name(user_input)
-  puts "#{player.name} is a #{player.position} for #{player.team.name}."
-  puts "
-  --------------------------------------------"
-  puts "Hit enter to return to previous menu"
-  gets.chomp
-  player_stats_menu
+def find_player_position(player)
+  # user_input = ""
+  # puts "Enter the player:"
+  # user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+  # player = Player.find_by_name(user_input)
+  # puts "#{player.name} is a #{player.position} for #{player.team.name}."
+  # puts "
+  # --------------------------------------------"
+  # puts "Hit enter to return to previous menu"
+  # gets.chomp
+  # player_stats_menu
+  "#{player.name} plays #{player.position}."
 end
 
 ## Player stats option 5 (get player's history/description) ###
@@ -278,12 +409,12 @@ end
 def team_menu
   puts "
   -------------------------------------
-  Team Menu Options
+  TEAM OPTIONS
 
-  1. Find the oldest team
-  2. Find the youngest Team
-  3. Select a team to learn more
-  4. Return to previous menu
+  1. Oldest Team
+  2. Youngest Team
+  3. Select A Team
+  4. Previous Menu
 
   press 'h' for help
   press 'q' to quit
@@ -306,10 +437,8 @@ def team_options
     case user_input
       when "1", "oldest"
         puts "\n#{Team.oldest}"
-        team_menu
       when "2", "youngest"
         puts "\n#{Team.youngest}"
-        team_menu
       when "3", "select a team"
         team_selection
         # puts "\nEnter a team name: "
@@ -319,14 +448,15 @@ def team_options
         # #binding.pry
         # team_details_menu(team)
       when "4", "p", "previous"
-        top_menu
+        main_menu
         break
       when "h", "help"
         team_menu
+        break
       when "q", "exit", "quit"
         exit_soccer
       else
-        puts "Please enter a valid option number."
+        puts "Please enter a valid menu option or press 'h' to view the menu again."
     end
   end
   # user_input = ""
@@ -337,54 +467,61 @@ def team_options
 end
 
 def team_selection
-  # puts "\nEnter a team name: "
-  # team_search = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
-  # #binding.pry
-  # found = Team.where("name LIKE ?",  "%#{team_search}%")
-
   found = []
 
   until found.size == 1
-    puts "\nEnter a team name: "
+    puts "\nEnter a team name or press enter for a list of teams: "
+
     team_search = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+
     found = Team.where("name LIKE ?",  "%#{team_search}%")
 
-    if found.size < 1
-      puts "\nNo team found!"
-    else
+    if found.size > 1
       puts "\nSelect a team from the list: "
+
       found.each do |t|
         puts "#{t.name}"
       end
 
+      puts "\n"
+
       team_search = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
-      found = found.select { |t| t.name === team_search }
-      if found.nil?
-        found.select { |t| t.name.include?(team_search) }
+
+      exact_match = found.select { |t| t.name == team_search }
+
+      if exact_match.size != 0
+        found = exact_match
+      else
+        found = found.select { |t| t.name.include?(team_search) }
       end
+    else
+      puts "\nNo team found!"
     end
   end
 
-  team_details_menu(found.first)
+  team_details_menu(found[0])
 end
 
 ################# TEAM DETAILS MENU #################
 
 def team_details_menu(team)
-  puts "----------------------
-  Team Details
+  puts "
+  ---------------------------
+  TEAM DETAILS
+
   1. History
   2. Location
   3. Competition
   4. Roster
-  5. Roster size
-  6. Team manager
-  7. Youngest player
-  8. Oldest player
+  5. Roster Size
+  6. Team Manager
+  7. Youngest Player
+  8. Oldest Player
+  9. Previous Menu
+  10. Main Menu
 
-
-  press 'h' for help
-  press 'q' to quit
+  Press 'h' for help
+  Press 'q' to quit
   -----------------------------
   "
 
@@ -404,7 +541,7 @@ def team_details_options(team)
         puts get_location_info(team)
       when "3", "competition"
         puts get_competition(team)
-        #league_options
+        #league_menu_input
       when "4", "roster"
         puts get_roster(team)
       when "5", "roster size"
@@ -418,15 +555,17 @@ def team_details_options(team)
       when "9", "p", "previous"
         team_menu
         break
+      when "10", "main", "main_menu"
+        main_menu
+        break
       when "h", "help"
-        team_details_menu
+        team_details_menu(team)
+        break
       when "q", "exit", "quit"
         exit_soccer
       else
-        puts "Please enter a valid option number."
+        puts "Please enter a valid menu option or press 'h' to view the menu again."
     end
-
-    team_details_menu(team)
   end
 end
 
@@ -473,59 +612,210 @@ end
 ############################## OPTION 3 LEAGUE METHODS ###########################
 
 def league_menu
-  puts "League Options Menu:
-  1. Get list of all soccer leagues
-  2. Search leagues by country
-  3. Find league stats
-  4. Return to previous menu
+  puts "
+  -----------------------------------------------------
+  LEAGUE OPTIONS
 
+  1. List Leagues
+  2. League Search by Country
+  3. League Lookup
+  4. Largest League
+  5. Smallest League
+  6. Oldest League
+  7. Youngest League
+  8. Previous Menu
 
-    h - help
-    q - exit program
-                              "
-  get_user_input_from_league_menu
-  get_top_level_user_input
+  Press 'h' for help
+  Press 'q' to quit
+  --------------------------------------------------
+  "
+
+  league_menu_input
+
+  # get_user_input_from_league_menu
+  # main_menu_input
 end
 
-def get_user_input_from_league_menu
+def league_menu_input
   user_input = ""
+
   while user_input
-    puts "Please enter one of the above option numbers:"
+    #puts "Please enter one of the above option numbers:"
     user_input = gets.downcase.strip
     case user_input
-      when "1"
-        list_of_all_leagues
-      when "2"
-        find_league_by_country
-      when "3"
-        puts "-------------------------------"
-        league_stats_menu
-      when "4"
-        puts "Welcome back!"
-        top_menu
-      break
-      when "h"
-        help
-      break
-      when "q"
+      when "1", "all leagues", "list leagues"
+        puts list_of_all_leagues
+      when "2", "country"
+        leagues_in_country
+      when "3", "lookup"
+        league_selection()
+      when "4", "largest"
+        find_largest_league
+      when "5", "smallest"
+        find_smallest_league
+      when "6", "oldest"
+        find_oldest_league
+      when "7", "youngest"
+        find_youngest_league
+      when "8", "previous", "previous menu"
+        main_menu
+        break
+      when "h", "help"
+        league_menu
+        break
+      when "q", "quit", "exit"
         exit_soccer
-        exit
     else
-      "Please enter a valid option number."
+      puts "Please enter a valid menu option or press 'h' to view the menu again."
     end
   end
 end
 
+def leagues_in_country
+  found = []
+
+  puts "\nEnter a country name: "
+  league_search = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+  found = League.where("nation LIKE ?", "%#{league_search}%")
+  if found.size < 1
+    puts "\nNo leagues were found in #{league_search}!"
+  else
+    puts "\nThere are #{found.size} leagues in #{found.sample.nation}. They are: "
+    found.each do |l|
+      puts "#{l.name}"
+    end
+  end
+
+  league_menu
+end
+
+def league_selection(country_search=nil)
+  found = []
+  found_countries = []
+
+  until found_countries.size == 1
+    # puts "\nEnter a country or press enter for a list of players by country: "
+    #
+    # country_search = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+
+    found = League.where("nation LIKE ?",  "%#{country_search}%")
+    found_countries = found.collect { |l| l.nation }.uniq
+    #found.distinct!
+    #binding.pry
+    if found_countries.size > 1
+      puts "\nSelect a country from the list: "
+
+      found_countries.each do |c|
+        puts "#{c}"
+      end
+
+      puts "\n"
+
+      country_search = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+
+      exact_match = found_countries.select { |c| c.downcase == country_search.downcase }
+
+      #binding.pry
+      if exact_match.size != 0
+        found = found.select { |l| l.nation == exact_match[0] }
+        found_countries = exact_match
+      else
+        found = found.select { |l| l.nationa.downcase.include?(country_search.downcase) }
+        found_countries = found.collect {|p| l.nation }
+      end
+    else
+      puts "\nNo country found!"
+    end
+  end
+
+  #player_details_menu(found[0])
+  #binding.pry
+  #output =
+  #found.each do |p|
+  #end
+  #list_players_from_country(found, found_countries[0])
+  # found = []
+  #
+  # until found.size == 1
+  #   puts "\nEnter a league name or press enter for a list of leagues: "
+  #
+  #   league_search = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+  #
+  #   found = League.where("name LIKE ?",  "%#{league_search}%")
+  #
+  #   if found.size > 1
+  #     puts "\nSelect a league from the list: "
+  #
+  #     found.each do |l|
+  #       puts "#{l.name}"
+  #     end
+  #
+  #     puts "\n"
+  #
+  #     league_search = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+  #
+  #     exact_match = found.select { |l| l.name == league_search }
+  #
+  #     if exact_match.size != 0
+  #       found = exact_match
+  #     else
+  #       found = found.select { |l| l.name.include?(league_search) }
+  #     end
+  #   else
+  #     puts "\nNo league found!"
+  #   end
+  # end
+  #
+  # team_details_menu(found[0])
+end
+
 ########## League Menu Options ###############
+def leagues_by_country #have to enter in exact data
+  #binding.pry
+
+  puts "\nEnter a country or press enter for a list of all leagues by country: "
+
+  country = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
+
+  if country == ""
+    countries = {}
+
+    League.all.each do |l|
+      if countries[l.nation].nil?
+        countries[l.nation] = []
+      end
+
+      countries[l.nation] << l.name
+    end
+    print_hash(countries)
+  else
+  league_selection(country)
+  end
+end
+
+def list_leagues_from_country(leagues, country)
+  output = "The following leagues are played in #{country}:"
+
+  players.each_with_index do |league, i|
+    output += "\n#{i + 1}. #{league.name}"
+  end
+
+  output
+end
 
 ####### Option 1 ###########
 def list_of_all_leagues
-  puts League.all.collect {|league| league.name}
-  puts "
-  --------------------------------------------"
-  puts "Hit enter to return to previous menu"
-  gets.chomp
-  league_menu
+  output = ""
+  league_list = League.all.collect {|l| l.name}
+
+  league_list.each do |l|
+    output += "#{p}\n"
+  end
+  # puts "
+  # --------------------------------------------"
+  # puts "Hit enter to return to previous menu"
+  # gets.chomp
+  # league_menu
 end
 ########## Option 2 #############
 def find_league_by_country
@@ -542,84 +832,78 @@ end
 
 ########## Option 3 ###########
 
-def league_stats_menu
-  puts "League Stats Options Menu:
+def league_details_menu(league)
+  puts "
+  ---------------------------
+  LEAGUE DETAILS
+  1. Teams
+  2. League Size
+  3. Players
+  4. Managers
+  5. History
+  6. Oldest Team
+  7. Youngest Team
+  8. Previous Menu
+  9. Main Menu
 
-  1. Get list of all teams in a league
-  2. Find number of players in a league
-  3. Find all players from a league
-  4. Get a list of managers in a league
-  5. Get a league's history/description
-  6. Get the year a league was founded, its age, & number of teams.
-  7. Find league's country
-  8. Find the oldest team in a league
-  9. Find the youngest team in a league
-  10. Find the largest league in the database
-  11.Find the smallest league in the database
-  12.Find the oldest league in the database
-  13.Find the youngest league in the database
+  Press 'h' for help
+  Press 'q' to quit
+  -----------------------------
+  "
 
-  14. Return to League Options Menu
+  #Please enter one of the above option numbers:
 
-  h - help
-  q - exit program
+  # 10. Find the largest league in the database
+  # 11. Find the smallest league in the database
+  # 12. Find the oldest league in the database
+  # 13. Find the youngest league in the database
 
-  Please enter one of the above option numbers:"
-
-  get_user_input_from_league_stats
-  get_top_level_user_input
+  # get_user_input_from_league_stats
+  # main_menu_input
+  league_details_options(league)
 end
 
-def get_user_input_from_league_stats
+def league_details_options(league)
   user_input = ""
+
   while user_input
     user_input = gets.downcase.strip
+
     case user_input
-      when "1"
-        list_of_teams_in_league
-      when "2"
+      when "1", "teams"
+        puts teams_in_league
+      when "2", "size"
         count_players_in_league
-      when "3"
+      when "3", "players"
         list_of_players_in_league
-      when "4"
+      when "4", "managers"
         list_of_managers_in_league
-      when "5"
+      when "5", "history"
         get_league_description
-      when "6"
-        get_year_founded_and_age_and_count
-      when "7"
-        get_league_country
-      when "8"
+      when "6", "oldest"
         find_oldest_team_in_league
-      when "9"
+      when "7", "youngest"
         find_youngest_team_in_league
-      when "10"
-        find_largest_league
-      when "11"
-        find_smallest_league
-      when "12"
-        find_oldest_league
-      when "13"
-        find_youngest_league
-      when "14"
-        puts "Welcome back!"
+      when "8", "previous menu", "previous"
         league_menu
         break
-      when "h"
-        help
+      when "9", "main menu", "main"
+        main_menu
         break
-      when "q"
+      when "h", "help"
+        league_details_menu(league)
+        break
+      when "q", "quit", "exit"
         exit_soccer
-        exit
       else
-        puts "Please enter a valid option number."
+        puts "Please enter a valid menu option or press 'h' to view the menu again."
     end
   end
 end
 
 ######### League Stats Options Methods ##############
 
-def list_of_teams_in_league
+def teams_in_league
   user_input = ""
   puts "Enter the league:"
   user_input = gets.split(" ").map{|w| w.capitalize}.join(" ").strip
@@ -631,7 +915,7 @@ def list_of_teams_in_league
   --------------------------------------------"
   puts "Hit enter to return to previous menu"
   gets.chomp
-  league_stats_menu
+  league_details_menu
 end
 
 def count_players_in_league
@@ -645,7 +929,6 @@ def count_players_in_league
   --------------------------------------------"
   puts "Hit enter to return to previous menu"
   gets.chomp
-  league_stats_menu
 end
 
 def list_of_players_in_league
@@ -660,7 +943,7 @@ def list_of_players_in_league
   --------------------------------------------"
   puts "Hit enter to return to previous menu"
   gets.chomp
-  league_stats_menu
+  league_details_menu
 end
 
 def list_of_managers_in_league
@@ -675,7 +958,7 @@ def list_of_managers_in_league
   --------------------------------------------"
   puts "Hit enter to return to previous menu"
   gets.chomp
-  league_stats_menu
+  league_details_menu
 end
 
 def get_league_description
@@ -688,7 +971,7 @@ def get_league_description
   --------------------------------------------"
   puts "Hit enter to return to previous menu"
   gets.chomp
-  league_stats_menu
+  league_details_menu
 end
 
 def get_year_founded_and_age_and_count
@@ -703,7 +986,7 @@ def get_year_founded_and_age_and_count
   --------------------------------------------"
   puts "Hit enter to return to previous menu"
   gets.chomp
-  league_stats_menu
+  league_details_menu
 end
 
 def get_league_country
@@ -717,7 +1000,7 @@ def get_league_country
   --------------------------------------------"
   puts "Hit enter to return to previous menu"
   gets.chomp
-  league_stats_menu
+  league_details_menu
 end
 
 def find_oldest_team_in_league
@@ -730,7 +1013,7 @@ def find_oldest_team_in_league
   --------------------------------------------"
   puts "Hit enter to return to previous menu"
   gets.chomp
-  league_stats_menu
+
 end
 
 def find_youngest_team_in_league
@@ -743,7 +1026,7 @@ def find_youngest_team_in_league
   --------------------------------------------"
   puts "Hit enter to return to previous menu"
   gets.chomp
-  league_stats_menu
+
 end
 
 def find_largest_league
@@ -752,7 +1035,6 @@ def find_largest_league
   --------------------------------------------"
   puts "Hit enter to return to previous menu"
   gets.chomp
-  league_stats_menu
 end
 
 def find_smallest_league
@@ -761,7 +1043,7 @@ def find_smallest_league
   --------------------------------------------"
   puts "Hit enter to return to previous menu"
   gets.chomp
-  league_stats_menu
+  #league_details_menu
 end
 
 def find_oldest_league
@@ -770,7 +1052,7 @@ def find_oldest_league
   --------------------------------------------"
   puts "Hit enter to return to previous menu"
   gets.chomp
-  league_stats_menu
+
 end
 
 def find_youngest_league
@@ -779,7 +1061,7 @@ def find_youngest_league
   --------------------------------------------"
   puts "Hit enter to return to previous menu"
   gets.chomp
-  league_stats_menu
+  league_details_menu
 end
 
 
@@ -795,7 +1077,7 @@ def help #need to refactor to display menu options
   4. Help
   5. Exit program
   ------------------------------"
-  get_top_level_user_input
+  main_menu_input
 end
 
 def exit_soccer
